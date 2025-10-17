@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">ARM Metrolog</string>
+    <string name="app_name">АРМ Метролог</string>
+    <string name="nav_home">Главная</string>
+    <string name="nav_about">О приложении</string>
+    <string name="nav_settings">Настройки</string>
+    <string name="nav_contact">Связаться с разработчиком</string>
+    <string name="navigation_drawer_open">Открыть навигацию</string>
+    <string name="navigation_drawer_close">Закрыть навигацию</string>
+    <string name="menu_units">Единицы измерения</string>
+    <string name="menu_current_loop">Токовая петля</string>
+    <string name="about_message">"АРМ Метролог"&#10;Версия приложения 0.1</string>
 </resources>
