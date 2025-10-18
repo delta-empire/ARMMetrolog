@@ -1,5 +1,6 @@
 package ru.sergeipavlov.armmetrolog;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -25,6 +26,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
+    private List<String> mainMenuItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(this::handleNavigationItemSelected);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new MainMenuAdapter(getMainMenuItems()));
+        mainMenuItems = getMainMenuItems();
+        recyclerView.setAdapter(new MainMenuAdapter(mainMenuItems, this::handleMainMenuItemClick));
     }
 
     private List<String> getMainMenuItems() {
@@ -66,6 +69,13 @@ public class MainActivity extends AppCompatActivity {
                 getString(R.string.menu_units),
                 getString(R.string.menu_current_loop)
         );
+    }
+
+    private void handleMainMenuItemClick(int position) {
+        if (position == 1) {
+            Intent intent = new Intent(this, CurrentLoopActivity.class);
+            startActivity(intent);
+        }
     }
 
     private boolean handleNavigationItemSelected(@NonNull MenuItem item) {
