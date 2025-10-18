@@ -29,4 +29,23 @@
     <string name="units_temperature">Температура</string>
     <string name="units_time">Время</string>
     <string name="units_speed">Скорость</string>
+    <string name="temperature_title">Температура</string>
+    <string name="temperature_section_si">Международная система (СИ)</string>
+    <string name="temperature_section_imperial">США и Британия</string>
+    <string name="temperature_section_other">Иные</string>
+    <string name="temperature_kelvin">Кельвин</string>
+    <string name="temperature_celsius">Цельсий</string>
+    <string name="temperature_fahrenheit">Фаренгейт</string>
+    <string name="temperature_rankine">Ранкин</string>
+    <string name="temperature_reaumur">Реомюр</string>
+    <string name="temperature_symbol_kelvin">K</string>
+    <string name="temperature_symbol_celsius">°C</string>
+    <string name="temperature_symbol_fahrenheit">°F</string>
+    <string name="temperature_symbol_rankine">°R</string>
+    <string name="temperature_symbol_reaumur">°Re</string>
+    <string name="temperature_kelvin_description">Кельвин — основная единица термодинамической температуры в системе СИ.</string>
+    <string name="temperature_celsius_description">Градус Цельсия — единица температуры, используемая для измерений в большинстве стран мира.</string>
+    <string name="temperature_fahrenheit_description">Градус Фаренгейта — единица температуры, принятая в США и ряде других стран.</string>
+    <string name="temperature_rankine_description">Градус Ранкина — абсолютная шкала температуры, аналог Кельвина в градусах Фаренгейта.</string>
+    <string name="temperature_reaumur_description">Градус Реомюра — историческая шкала температуры, делящая диапазон между льдом и кипящей водой на 80 частей.</string>
 </resources>

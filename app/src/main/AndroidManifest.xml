@@ -16,8 +16,15 @@
             android:exported="false"
             android:label="@string/units_title"
             android:parentActivityName=".MainActivity"
-            tools:targetApi="jelly_bean"> 
+            tools:targetApi="jelly_bean">
         </activity>
+
+        <activity
+            android:name=".TemperatureActivity"
+            android:exported="false"
+            android:label="@string/temperature_title"
+            android:parentActivityName=".UnitsActivity"
+            tools:targetApi="jelly_bean" />
 
         <activity
             android:name=".CurrentLoopActivity"

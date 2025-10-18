@@ -1,5 +1,6 @@
 package ru.sergeipavlov.armmetrolog;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -29,7 +30,7 @@ public class UnitsActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.units_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new UnitsAdapter(getUnitsItems()));
+        recyclerView.setAdapter(new UnitsAdapter(getUnitsItems(), this::onUnitSelected));
     }
 
     @NonNull
@@ -39,5 +40,10 @@ public class UnitsActivity extends AppCompatActivity {
                 getString(R.string.units_time),
                 getString(R.string.units_speed)
         );
+    }
+    private void onUnitSelected(@NonNull String unit) {
+        if (unit.equals(getString(R.string.units_temperature))) {
+            startActivity(new Intent(this, TemperatureActivity.class));
+        }
     }
 }
