@@ -9,4 +9,20 @@
     <string name="menu_units">Единицы измерения</string>
     <string name="menu_current_loop">Токовая петля</string>
     <string name="about_message">"АРМ Метролог"&#10;Версия приложения 0.1</string>
+    <string name="current_loop_title">Шкала-Сигнал</string>
+    <string name="current_loop_scale_type">Тип шкалы</string>
+    <string name="current_loop_physical_range">Физическая величина</string>
+    <string name="current_loop_signal_range">Унифицированный сигнал</string>
+    <string name="current_loop_physical_value">Физическая величина</string>
+    <string name="current_loop_signal_value">Унифицированный сигнал</string>
+    <string name="current_loop_start">Начало</string>
+    <string name="current_loop_end">Конец</string>
+    <string-array name="current_loop_scale_types">
+        <item>Линейная шкала</item>
+        <item>Линейная, убывающая шкала</item>
+        <item>Квадратичная шкала</item>
+        <item>Квадратичная, убывающая шкала</item>
+        <item>Корнеизвлекающая</item>
+        <item>Корнеизвлекающая, убывающая шкала</item>
+    </string-array>
 </resources>

@@ -12,6 +12,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ARMMetrolog">
         <activity
+            android:name=".CurrentLoopActivity"
+            android:exported="false"
+            android:label="@string/current_loop_title"
+            android:parentActivityName=".MainActivity"
+            tools:targetApi="jelly_bean">
+        </activity>
+
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
