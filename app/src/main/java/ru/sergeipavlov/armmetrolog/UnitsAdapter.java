@@ -12,10 +12,16 @@ import java.util.List;
 
 class UnitsAdapter extends RecyclerView.Adapter<UnitsAdapter.UnitViewHolder> {
 
-    private final List<String> units;
+    interface OnUnitClickListener {
+        void onUnitClick(@NonNull String unitTitle);
+    }
 
-    UnitsAdapter(@NonNull List<String> units) {
+    private final List<String> units;
+    private final OnUnitClickListener clickListener;
+
+    UnitsAdapter(@NonNull List<String> units, @NonNull OnUnitClickListener clickListener) {
         this.units = units;
+        this.clickListener = clickListener;
     }
 
     @NonNull
@@ -23,7 +29,7 @@ class UnitsAdapter extends RecyclerView.Adapter<UnitsAdapter.UnitViewHolder> {
     public UnitViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.item_main_menu, parent, false);
-        return new UnitViewHolder(view);
+        return new UnitViewHolder(view, clickListener);
     }
 
     @Override
@@ -39,15 +45,17 @@ class UnitsAdapter extends RecyclerView.Adapter<UnitsAdapter.UnitViewHolder> {
     static class UnitViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView titleView;
+        private final OnUnitClickListener clickListener;
 
-        UnitViewHolder(@NonNull View itemView) {
+        UnitViewHolder(@NonNull View itemView, @NonNull OnUnitClickListener clickListener) {
             super(itemView);
+            this.clickListener = clickListener;
             titleView = itemView.findViewById(R.id.menu_item_title);
         }
 
         void bind(@NonNull String title) {
             titleView.setText(title);
-            itemView.setOnClickListener(null);
+            itemView.setOnClickListener(v -> clickListener.onUnitClick(title));
         }
     }
 }
