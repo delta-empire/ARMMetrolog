@@ -6,6 +6,7 @@ import android.text.TextWatcher;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,7 +59,7 @@ public class TemperatureActivity extends AppCompatActivity {
         setupSymbolDialog(R.id.temperature_rankine_symbol, R.string.temperature_rankine, R.string.temperature_rankine_description);
         setupSymbolDialog(R.id.temperature_reaumur_symbol, R.string.temperature_reaumur, R.string.temperature_reaumur_description);
 
-        updateTemperatures(Unit.KELVIN, 0.0, 3);
+        updateTemperatures(Unit.KELVIN, 0.0, 3, null, -1, -1);
 
         kelvinInput.addTextChangedListener(createWatcher(Unit.KELVIN));
         celsiusInput.addTextChangedListener(createWatcher(Unit.CELSIUS));
@@ -94,20 +95,36 @@ public class TemperatureActivity extends AppCompatActivity {
                     return;
                 }
 
-                String value = editable.toString().trim();
-                if (value.isEmpty() || isIncompleteNumber(value)) {
+                TextInputEditText sourceEditText = getEditText(unit);
+                if (sourceEditText == null) {
                     return;
                 }
 
-                double parsedValue;
-                try {
-                    parsedValue = Double.parseDouble(value.replace(',', '.'));
-                } catch (NumberFormatException exception) {
+                int selectionStart = sourceEditText.getSelectionStart();
+                int selectionEnd = sourceEditText.getSelectionEnd();
+
+                String rawValue = editable.toString();
+                String value = rawValue.trim();
+                if (isIncompleteNumber(value)) {
                     return;
                 }
 
-                int fractionDigits = Math.max(getFractionDigits(value), 3);
-                updateTemperatures(unit, parsedValue, fractionDigits);
+                boolean treatAsZero = value.isEmpty();
+                double parsedValue = 0.0;
+                if (!treatAsZero) {
+                    try {
+                        parsedValue = Double.parseDouble(value.replace(',', '.'));
+                    } catch (NumberFormatException exception) {
+                        return;
+                    }
+                }
+
+                int fractionDigits = treatAsZero
+                        ? 3
+                        : Math.max(getFractionDigits(value), 3);
+                CharSequence sourceTextOverride = treatAsZero ? rawValue : null;
+
+                updateTemperatures(unit, parsedValue, fractionDigits, sourceTextOverride, selectionStart, selectionEnd);
             }
         };
     }
@@ -128,7 +145,8 @@ public class TemperatureActivity extends AppCompatActivity {
         return value.length() - separatorIndex - 1;
     }
 
-    private void updateTemperatures(@NonNull Unit sourceUnit, double value, int fractionDigits) {
+    private void updateTemperatures(@NonNull Unit sourceUnit, double value, int fractionDigits,
+                                    @Nullable CharSequence sourceTextOverride, int selectionStart, int selectionEnd) {
         double kelvin = toKelvin(sourceUnit, value);
         double celsius = kelvinToCelsius(kelvin);
         double fahrenheit = kelvinToFahrenheit(kelvin);
@@ -138,18 +156,31 @@ public class TemperatureActivity extends AppCompatActivity {
         isUpdating = true;
         String formatPattern = "%1$." + fractionDigits + "f";
 
-        setFormattedText(kelvinInput, kelvin, formatPattern);
-        setFormattedText(celsiusInput, celsius, formatPattern);
-        setFormattedText(fahrenheitInput, fahrenheit, formatPattern);
-        setFormattedText(rankineInput, rankine, formatPattern);
-        setFormattedText(reaumurInput, reaumur, formatPattern);
+        updateEditText(kelvinInput, kelvin, formatPattern, sourceUnit == Unit.KELVIN, sourceTextOverride);
+        updateEditText(celsiusInput, celsius, formatPattern, sourceUnit == Unit.CELSIUS, sourceTextOverride);
+        updateEditText(fahrenheitInput, fahrenheit, formatPattern, sourceUnit == Unit.FAHRENHEIT, sourceTextOverride);
+        updateEditText(rankineInput, rankine, formatPattern, sourceUnit == Unit.RANKINE, sourceTextOverride);
+        updateEditText(reaumurInput, reaumur, formatPattern, sourceUnit == Unit.REAUMUR, sourceTextOverride);
 
         TextInputEditText sourceEditText = getEditText(sourceUnit);
-        if (sourceEditText != null && sourceEditText.getText() != null) {
-            sourceEditText.setSelection(sourceEditText.getText().length());
+        if (sourceEditText != null) {
+            int length = sourceEditText.getText() != null ? sourceEditText.getText().length() : 0;
+            int start = selectionStart < 0 ? length : Math.min(selectionStart, length);
+            int end = selectionEnd < 0 ? start : Math.min(selectionEnd, length);
+            sourceEditText.setSelection(start, end);
         }
 
         isUpdating = false;
+    }
+
+    private void updateEditText(@NonNull TextInputEditText editText, double value,
+                                @NonNull String formatPattern, boolean isSource,
+                                @Nullable CharSequence sourceTextOverride) {
+        if (isSource && sourceTextOverride != null) {
+            editText.setText(sourceTextOverride);
+        } else {
+            setFormattedText(editText, value, formatPattern);
+        }
     }
 
     private void setFormattedText(@NonNull TextInputEditText editText, double value, @NonNull String formatPattern) {
