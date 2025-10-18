@@ -72,7 +72,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleMainMenuItemClick(int position) {
-        if (position == 1) {
+        if (position == 0) {
+            Intent intent = new Intent(this, UnitsActivity.class);
+            startActivity(intent);
+        } else if (position == 1) {
             Intent intent = new Intent(this, CurrentLoopActivity.class);
             startActivity(intent);
         }

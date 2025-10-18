@@ -25,4 +25,8 @@
         <item>Корнеизвлекающая</item>
         <item>Корнеизвлекающая, убывающая шкала</item>
     </string-array>
+    <string name="units_title">Единицы измерения</string>
+    <string name="units_temperature">Температура</string>
+    <string name="units_time">Время</string>
+    <string name="units_speed">Скорость</string>
 </resources>
