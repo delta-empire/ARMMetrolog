@@ -44,6 +44,8 @@ public class UnitsActivity extends AppCompatActivity {
     private void onUnitSelected(@NonNull String unit) {
         if (unit.equals(getString(R.string.units_temperature))) {
             startActivity(new Intent(this, TemperatureActivity.class));
+        } else if (unit.equals(getString(R.string.units_time))) {
+            startActivity(new Intent(this, TimeActivity.class));
         }
     }
 }
