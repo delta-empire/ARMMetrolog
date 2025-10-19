@@ -27,6 +27,13 @@
             tools:targetApi="jelly_bean" />
 
         <activity
+            android:name=".TimeActivity"
+            android:exported="false"
+            android:label="@string/time_title"
+            android:parentActivityName=".UnitsActivity"
+            tools:targetApi="jelly_bean" />
+
+        <activity
             android:name=".CurrentLoopActivity"
             android:exported="false"
             android:label="@string/current_loop_title"
