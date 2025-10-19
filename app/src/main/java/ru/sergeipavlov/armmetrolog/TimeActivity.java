@@ -68,7 +68,7 @@ public class TimeActivity extends AppCompatActivity {
         centuryInput = findViewById(R.id.time_century_input);
         millenniumInput = findViewById(R.id.time_millennium_input);
 
-        updateTimes(Unit.SECOND, 0.0, 3, null, -1, -1);
+        updateTimes(Unit.SECOND, 0.0, 3, -1, -1);
 
         secondInput.addTextChangedListener(createWatcher(Unit.SECOND));
         microsecondInput.addTextChangedListener(createWatcher(Unit.MICROSECOND));
@@ -111,26 +111,20 @@ public class TimeActivity extends AppCompatActivity {
 
                 String rawValue = editable.toString();
                 String value = rawValue.trim();
-                if (isIncompleteNumber(value)) {
+                if (value.isEmpty() || isIncompleteNumber(value)) {
                     return;
                 }
 
-                boolean treatAsZero = value.isEmpty();
-                double parsedValue = 0.0;
-                if (!treatAsZero) {
-                    try {
-                        parsedValue = Double.parseDouble(value.replace(',', '.'));
-                    } catch (NumberFormatException exception) {
-                        return;
-                    }
+                double parsedValue;
+                try {
+                    parsedValue = Double.parseDouble(value.replace(',', '.'));
+                } catch (NumberFormatException exception) {
+                    return;
                 }
 
-                int fractionDigits = treatAsZero
-                        ? 3
-                        : Math.max(getFractionDigits(value), 3);
-                CharSequence sourceTextOverride = treatAsZero ? rawValue : null;
+                int fractionDigits = Math.max(getFractionDigits(value), 3);
 
-                updateTimes(unit, parsedValue, fractionDigits, sourceTextOverride, selectionStart, selectionEnd);
+                updateTimes(unit, parsedValue, fractionDigits, selectionStart, selectionEnd);
             }
         };
     }
@@ -152,7 +146,7 @@ public class TimeActivity extends AppCompatActivity {
     }
 
     private void updateTimes(@NonNull Unit sourceUnit, double value, int fractionDigits,
-                              @Nullable CharSequence sourceTextOverride, int selectionStart, int selectionEnd) {
+                              int selectionStart, int selectionEnd) {
         double seconds = toSeconds(sourceUnit, value);
         double microseconds = secondsToMicroseconds(seconds);
         double milliseconds = secondsToMilliseconds(seconds);
@@ -168,17 +162,17 @@ public class TimeActivity extends AppCompatActivity {
         isUpdating = true;
         String formatPattern = "%1$." + fractionDigits + "f";
 
-        updateEditText(secondInput, seconds, formatPattern, sourceUnit == Unit.SECOND, sourceTextOverride);
-        updateEditText(microsecondInput, microseconds, formatPattern, sourceUnit == Unit.MICROSECOND, sourceTextOverride);
-        updateEditText(millisecondInput, milliseconds, formatPattern, sourceUnit == Unit.MILLISECOND, sourceTextOverride);
-        updateEditText(minuteInput, minutes, formatPattern, sourceUnit == Unit.MINUTE, sourceTextOverride);
-        updateEditText(hourInput, hours, formatPattern, sourceUnit == Unit.HOUR, sourceTextOverride);
-        updateEditText(dayInput, days, formatPattern, sourceUnit == Unit.DAY, sourceTextOverride);
-        updateEditText(weekInput, weeks, formatPattern, sourceUnit == Unit.WEEK, sourceTextOverride);
-        updateEditText(monthInput, months, formatPattern, sourceUnit == Unit.MONTH, sourceTextOverride);
-        updateEditText(yearInput, years, formatPattern, sourceUnit == Unit.YEAR, sourceTextOverride);
-        updateEditText(centuryInput, centuries, formatPattern, sourceUnit == Unit.CENTURY, sourceTextOverride);
-        updateEditText(millenniumInput, millennia, formatPattern, sourceUnit == Unit.MILLENNIUM, sourceTextOverride);
+        updateEditText(secondInput, seconds, formatPattern);
+        updateEditText(microsecondInput, microseconds, formatPattern);
+        updateEditText(millisecondInput, milliseconds, formatPattern);
+        updateEditText(minuteInput, minutes, formatPattern);
+        updateEditText(hourInput, hours, formatPattern);
+        updateEditText(dayInput, days, formatPattern);
+        updateEditText(weekInput, weeks, formatPattern);
+        updateEditText(monthInput, months, formatPattern);
+        updateEditText(yearInput, years, formatPattern);
+        updateEditText(centuryInput, centuries, formatPattern);
+        updateEditText(millenniumInput, millennia, formatPattern);
 
         TextInputEditText sourceEditText = getEditText(sourceUnit);
         if (sourceEditText != null) {
@@ -192,13 +186,8 @@ public class TimeActivity extends AppCompatActivity {
     }
 
     private void updateEditText(@NonNull TextInputEditText editText, double value,
-                                @NonNull String formatPattern, boolean isSource,
-                                @Nullable CharSequence sourceTextOverride) {
-        if (isSource && sourceTextOverride != null) {
-            editText.setText(sourceTextOverride);
-        } else {
-            setFormattedText(editText, value, formatPattern);
-        }
+                                @NonNull String formatPattern) {
+        setFormattedText(editText, value, formatPattern);
     }
 
     private void setFormattedText(@NonNull TextInputEditText editText, double value,

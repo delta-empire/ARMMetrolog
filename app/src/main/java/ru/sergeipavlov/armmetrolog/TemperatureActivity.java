@@ -6,7 +6,6 @@ import android.text.TextWatcher;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -59,7 +58,7 @@ public class TemperatureActivity extends AppCompatActivity {
         setupSymbolDialog(R.id.temperature_rankine_symbol, R.string.temperature_rankine, R.string.temperature_rankine_description);
         setupSymbolDialog(R.id.temperature_reaumur_symbol, R.string.temperature_reaumur, R.string.temperature_reaumur_description);
 
-        updateTemperatures(Unit.KELVIN, 0.0, 3, null, -1, -1);
+        updateTemperatures(Unit.KELVIN, 0.0, 3, -1, -1);
 
         kelvinInput.addTextChangedListener(createWatcher(Unit.KELVIN));
         celsiusInput.addTextChangedListener(createWatcher(Unit.CELSIUS));
@@ -105,26 +104,20 @@ public class TemperatureActivity extends AppCompatActivity {
 
                 String rawValue = editable.toString();
                 String value = rawValue.trim();
-                if (isIncompleteNumber(value)) {
+                if (value.isEmpty() || isIncompleteNumber(value)) {
                     return;
                 }
 
-                boolean treatAsZero = value.isEmpty();
-                double parsedValue = 0.0;
-                if (!treatAsZero) {
-                    try {
-                        parsedValue = Double.parseDouble(value.replace(',', '.'));
-                    } catch (NumberFormatException exception) {
-                        return;
-                    }
+                double parsedValue;
+                try {
+                    parsedValue = Double.parseDouble(value.replace(',', '.'));
+                } catch (NumberFormatException exception) {
+                    return;
                 }
 
-                int fractionDigits = treatAsZero
-                        ? 3
-                        : Math.max(getFractionDigits(value), 3);
-                CharSequence sourceTextOverride = treatAsZero ? rawValue : null;
+                int fractionDigits = Math.max(getFractionDigits(value), 3);
 
-                updateTemperatures(unit, parsedValue, fractionDigits, sourceTextOverride, selectionStart, selectionEnd);
+                updateTemperatures(unit, parsedValue, fractionDigits, selectionStart, selectionEnd);
             }
         };
     }
@@ -146,7 +139,7 @@ public class TemperatureActivity extends AppCompatActivity {
     }
 
     private void updateTemperatures(@NonNull Unit sourceUnit, double value, int fractionDigits,
-                                    @Nullable CharSequence sourceTextOverride, int selectionStart, int selectionEnd) {
+                                    int selectionStart, int selectionEnd) {
         double kelvin = toKelvin(sourceUnit, value);
         double celsius = kelvinToCelsius(kelvin);
         double fahrenheit = kelvinToFahrenheit(kelvin);
@@ -156,11 +149,11 @@ public class TemperatureActivity extends AppCompatActivity {
         isUpdating = true;
         String formatPattern = "%1$." + fractionDigits + "f";
 
-        updateEditText(kelvinInput, kelvin, formatPattern, sourceUnit == Unit.KELVIN, sourceTextOverride);
-        updateEditText(celsiusInput, celsius, formatPattern, sourceUnit == Unit.CELSIUS, sourceTextOverride);
-        updateEditText(fahrenheitInput, fahrenheit, formatPattern, sourceUnit == Unit.FAHRENHEIT, sourceTextOverride);
-        updateEditText(rankineInput, rankine, formatPattern, sourceUnit == Unit.RANKINE, sourceTextOverride);
-        updateEditText(reaumurInput, reaumur, formatPattern, sourceUnit == Unit.REAUMUR, sourceTextOverride);
+        updateEditText(kelvinInput, kelvin, formatPattern);
+        updateEditText(celsiusInput, celsius, formatPattern);
+        updateEditText(fahrenheitInput, fahrenheit, formatPattern);
+        updateEditText(rankineInput, rankine, formatPattern);
+        updateEditText(reaumurInput, reaumur, formatPattern);
 
         TextInputEditText sourceEditText = getEditText(sourceUnit);
         if (sourceEditText != null) {
@@ -174,13 +167,8 @@ public class TemperatureActivity extends AppCompatActivity {
     }
 
     private void updateEditText(@NonNull TextInputEditText editText, double value,
-                                @NonNull String formatPattern, boolean isSource,
-                                @Nullable CharSequence sourceTextOverride) {
-        if (isSource && sourceTextOverride != null) {
-            editText.setText(sourceTextOverride);
-        } else {
-            setFormattedText(editText, value, formatPattern);
-        }
+                                @NonNull String formatPattern) {
+        setFormattedText(editText, value, formatPattern);
     }
 
     private void setFormattedText(@NonNull TextInputEditText editText, double value, @NonNull String formatPattern) {
